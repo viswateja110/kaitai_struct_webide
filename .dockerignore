@@ -1,0 +1,53 @@
+# Node modules (will be installed fresh)
+node_modules
+npm-debug.log
+
+# Build artifacts (will be generated during build)
+js/
+*.js.map
+
+# Git files
+.git
+.gitignore
+.gitmodules
+
+# IDE and editor files
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Project-specific
+build/
+out/
+*.log
+
+# CI/CD
+.travis.yml
+.github
+
+# Documentation (already copied)
+docs/wiki
+
+# Development files
+serve_files.py
+serve_practice.py
+requirements.txt
+practice/
+playground/
+template_compiler/
+
+# C# project files (not needed for deployment)
+*.csproj
+*.sln
+
+# Build scripts (but keep vendor_build.js and vendor_license.js as they're needed)
+build.js
+checker.js
+push_artifacts/
+
