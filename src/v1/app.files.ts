@@ -225,9 +225,27 @@ export function initFileTree() {
                 }
             ],
         },
-        plugins: ["wholerow", "dnd"]
+        plugins: ["wholerow", "dnd", "search"],
+        search: {
+            show_only_matches: true,
+            show_only_matches_children: true,
+            case_insensitive: true,
+            search_leaves_only: false
+        }
     }).jstree(true);
     refreshFsNodes();
+
+    // Setup search functionality
+    var searchTimeout: number | null = null;
+    $("#fileTreeSearch").on("input", function() {
+        if (searchTimeout) {
+            clearTimeout(searchTimeout);
+        }
+        var searchString = $(this).val() as string;
+        searchTimeout = window.setTimeout(function() {
+            app.ui.fileTree.search(searchString);
+        }, 250);
+    });
 
     var uiFiles = {
         fileTreeContextMenu: $("#fileTreeContextMenu"),

@@ -140,6 +140,7 @@ export class FileTree extends Vue {
     fsTree: IFsTreeNode = null;
     selectedFsItem: FsTreeNode = null;
     defaultStorage: FsTreeNode = null;
+    searchQuery: string = "";
 
     get ctxMenu() { return <ContextMenu>this.$refs["ctxMenu"]; }
     get fsTreeView() { return <TreeView<FsTreeNode>>this.$refs["fsTree"]; }
@@ -149,6 +150,52 @@ export class FileTree extends Vue {
     get selectedUri() { return this.selectedFsItem.uri.uri; }
     get canCreateFile() { return this.selectedFsItem && this.selectedFsItem.canWrite && this.selectedFsItem.isFolder; }
     get canDownloadFile() { return this.selectedFsItem && !this.selectedFsItem.isFolder; }
+
+    get filteredFsTree(): IFsTreeNode {
+        if (!this.searchQuery || !this.fsTree) {
+            return this.fsTree;
+        }
+
+        const query = this.searchQuery.toLowerCase().trim();
+        return this.filterTreeNode(this.fsTree, query);
+    }
+
+    private filterTreeNode(node: IFsTreeNode, query: string): IFsTreeNode | null {
+        if (!node) return null;
+
+        // Check if current node matches
+        const nodeMatches = node.text && node.text.toLowerCase().includes(query);
+
+        // Filter children recursively
+        let filteredChildren: IFsTreeNode[] = null;
+        if (node.children) {
+            filteredChildren = node.children
+                .map(child => this.filterTreeNode(child, query))
+                .filter(child => child !== null);
+        }
+
+        // Include node if it matches or has matching children
+        if (nodeMatches || (filteredChildren && filteredChildren.length > 0)) {
+            // Create a shallow copy with filtered children
+            const filtered = Object.create(Object.getPrototypeOf(node));
+            Object.assign(filtered, node);
+            
+            if (filteredChildren && filteredChildren.length > 0) {
+                filtered.children = filteredChildren;
+            } else if (!nodeMatches) {
+                filtered.children = null;
+            }
+            
+            return filtered;
+        }
+
+        return null;
+    }
+
+    onSearchInput() {
+        // Trigger filtering through computed property
+        // The Vue reactivity system will handle the update
+    }
 
     public init() {
         this.fsTree = fsData;

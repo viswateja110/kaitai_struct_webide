@@ -1,5 +1,9 @@
 ﻿<style>
     .fileTree { display: flex; flex-flow: column; height: 100%; background: #333 }
+    .fileTree .searchBox { padding: 8px; background: #2a2a2a; border-bottom: 1px solid #1a1a1a }
+    .fileTree .searchBox input { width: 100%; padding: 6px 10px; background: #1a1a1a; border: 1px solid #444; color: #ddd; border-radius: 3px; font-size: 12px }
+    .fileTree .searchBox input:focus { outline: none; border-color: #5cb85c; background: #222 }
+    .fileTree .searchBox input::placeholder { color: #888 }
     .fileTree .treeView { font-family: Arial; font-size: 12px; height: 100%; background: #333 }
     .fileTree .footer { width:100%; padding-left:2px }
     .fileTree .footer .btn { width:33.3%; border-radius:0; font-size:13px; padding:3px 10px }
@@ -7,7 +11,10 @@
 
 <template>
     <div class="fileTree">
-        <tree-view :model="fsTree" ref="fsTree" @item-dblclick="openFile" @item-contextmenu="showContextMenu"
+        <div class="searchBox">
+            <input type="text" v-model="searchQuery" @input="onSearchInput" placeholder="Search formats..." />
+        </div>
+        <tree-view :model="filteredFsTree" ref="fsTree" @item-dblclick="openFile" @item-contextmenu="showContextMenu"
                 :whole-row="true" @selected="fsItemSelected">
             <template scope="_">
                 <a :class="{bold: _.vm.open}">
